@@ -186,7 +186,7 @@ func (t *SimpleChaincode) init_reimbursement(stub shim.ChaincodeStubInterface, a
 
 	rem := Reimbursement{}
 	json.Unmarshal(accountAsBytes, &rem)
-	if rem.ReimbursementId == expId {
+	if rem.ReimbursementId == remId {
 		return nil, errors.New("This reimbursement arleady exists")
 	}
 
@@ -195,7 +195,7 @@ func (t *SimpleChaincode) init_reimbursement(stub shim.ChaincodeStubInterface, a
 
 	//build the expenditure json string 
 	str := `{"reimbursementid": "` + remId + `", "amount": "` + remAmountStr + `", "fromactor": "` + remFromActor + 
-	       `", "toUser": "` + remToActor + `", "date": "` + remDate + `", "expenditureid": "` + remExpId + 
+	       `", "toActor": "` + remToActor + `", "date": "` + remDate + `", "expenditureid": "` + remExpId + 
 	        `"}`
 	//jsonAsBytesActor, _ := json.Marshal(newActor)
 	err = stub.PutState(remId, []byte(str))
