@@ -17,7 +17,7 @@ func
 	act1[0] = "ACT-101"                //ActorId
 	act1[1] = "PPM Foundation"     //ActorName
 	act1[2] = "125000"             //Comiitted
-	act1[3] = "55000"              //Reimbursed
+	act1[3] = "19500"              //Reimbursed
 	act1[4] = ""                   //Awarded
 	act1[5] = ""                   //Spent
     act1[6] = ""                   //Received 
@@ -31,7 +31,7 @@ func
 	act2[3] = ""                         //Reimbursed
 	act2[4] = "125000"                 //Awarded
 	act2[5] = "23000"                  //Spent
-    act2[6] = "55000"                 //Received 
+    act2[6] = "10000"                 //Received 
     act2[7] = "45000"                 //Delegated
 
 	// sub-grantee info
@@ -42,7 +42,7 @@ func
 	act3[3] = ""               //Reimbursed
 	act3[4] = "45000"          //Awarded
 	act3[5] = "12000"          //Spent
-    act3[6] = "25000"          //Received 
+    act3[6] = "9500"          //Received 
     act3[7] = ""               //Delegated
 
     // Supplier info -- shows spending form all the grantees and sub-grantees
@@ -61,6 +61,38 @@ func
 	t.init_actor(stub, act2)
 	t.init_actor(stub, act3)
 	t.init_actor(stub, act4)
+
+	//**************************************
+
+	type Award struct {
+	AwardId        string `json:"awardid"`
+	AwardName      string `json:"awardname"`	
+	AwardAmount string `json:"awardamount"`	
+	Expenses []Expenditure `json:"expenditures"`
+	Reimburses []Reimbursement `json:"reimburses"`
+}
+
+   awdId := "AWD-10"
+   awardName := "CANCER RESEARCH"
+   awardAmount := "125000"
+   
+   awardStr := `{"awardid": "` + awdId + `", "awardname": "` + awardName + `", "awardamount": "` + awardAmount + 
+	       `", {"` +
+	       `"expenditures": "` + expStr0 + `", "` +
+			                   + expStr1 
+			 `"}`
+
+
+
+	expStr0 := `{"expenditureid": "` + expId + `", "amount": "` + expAmount + `", "date": "` + expDate + 
+	       `", "type": "` + expType + `", "status": "` + expStatus + `", "fromactor": "` + fromActor + 
+	       `", "toactor": "` + toActor + `"}`
+
+
+  	remStr1 := `{"reimbursementid": "` + remId + `", "amount": "` + remAmountStr + `", "fromactor": "` + remFromActor + 
+	       `", "toActor": "` + remToActor + `", "date": "` + remDate + `", "expenditureid": "` + remExpId + 
+	        `"}` 
+
 
 //***********************************************
 	type Reimbursement struct {
