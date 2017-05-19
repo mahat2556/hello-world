@@ -1,24 +1,36 @@
 func (t *SimpleChaincode) QueryAllExpenses(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	// 0 award id
+	
 	if len(args) != 1 {
 		return nil, errors.New("Number of arguments is not correct. Expected 1")
 	}
 	if len(args[0]) <= 0 {
 		return nil, errors.New("1st argument must be a non-empty string")
 	}
+	
 
-	awardAsBytes, err := stub.GetState(args[0])
+	//get the exp index
+	expsIndexAsBytes, err := stub.GetState(expIndexStr)
 	if err != nil {
-		return nil, errors.New("Failed to get award.")
+		return nil, errors.New("Failed to get expenditure index")
 	}
+	var expIndex []string
+	json.Unmarshal(expsIndexAsBytes, &expIndex)
+	
 
-	awardPlain := Award{}
-	json.Unmarshal(awardAsBytes, &awardPlain)
-
-	expenses := awardPlain.Expenses
-	awardAsBytes, _ = json.Marshal(expenses)
+	var expenses []Expenditure
+	for i := 0; i < len(expIndex); i++{
+		expAsBytes, err := stub.GetState(expIndex[i])
+		if err != nil {
+			return nil, errors.New("Failed to get expenditure")
+		}
+		oneExpense := Expenditure{}
+		json.Unmarshal(expAsBytes, &oneExpense)
+		expenses = append(expenses, oneExpense)
+	}
+	
+	expsAsBytes, _ := json.Marshal(expenses)
 
 	//awardAsBytes = []byte("string")
 
-	return awardAsBytes, nil
+	return expsAsBytes, nil
 }
