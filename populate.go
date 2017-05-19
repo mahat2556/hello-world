@@ -62,6 +62,162 @@ func
 	t.init_actor(stub, act3)
 	t.init_actor(stub, act4)
 
+//***********************************************
+	type Reimbursement struct {
+	ReimbursementId string `json:"reimbursementid"`
+	Amount          int `json:"amount"`
+	FromActor        string `json:"fromactor"`
+	ToActor          string `json:"toactor"`
+	Date            string `json:"date"`
+	ExpenditureId string `json:"expenditureid"`
+}
+
+	// Reimbursement
+	var rem1  = make([]string, 6,6)
+	rem1[0] = "REM-301"                //ReimbursementId
+	rem1[1] = "3000"                   //Amount
+    rem1[2] = "ACT-101"                //FromActor  
+    rem1[3] = "ACT-102"    	           //ToActor
+	rem1[4] = "05-02-2017"             //Date	
+	rem1[5] = "EXP-201"               //ExpenditureId
+
+ 	var rem2  = make([]string, 6,6)
+	rem2[0] = "REM-302"                //ReimbursementId
+	rem2[1] = "4000"                   //Amount
+    rem2[2] = "ACT-101"                //FromActor  
+    rem2[3] = "ACT-102"    	           //ToActor
+	rem2[4] = "05-04-2017"             //Date	
+	rem2[5] = "EXP-203"               //ExpenditureId   
+
+	var rem3  = make([]string, 6,6)
+	rem3[0] = "REM-303"                //ReimbursementId
+	rem3[1] = "3000"                   //Amount
+    rem3[2] = "ACT-101"                //FromActor  
+    rem3[3] = "ACT-102"    	           //ToActor
+	rem3[4] = "05-09-2017"             //Date	
+	rem3[5] = "EXP-204"               //ExpenditureId 
+
+	var rem4  = make([]string, 6,6)
+	rem4[0] = "REM-304"                //ReimbursementId
+	rem4[1] = "5000"                   //Amount
+    rem4[2] = "ACT-101"                //FromActor  
+    rem4[3] = "ACT-102"    	           //ToActor
+	rem4[4] = "05-11-2017"             //Date	
+	rem4[5] = "EXP-205"               //ExpenditureId 
+
+	var rem5  = make([]string, 6,6)
+	rem5[0] = "REM-305"                //ReimbursementId
+	rem5[1] = "2000"                   //Amount
+    rem5[2] = "ACT-102"                //FromActor  
+    rem5[3] = "ACT-103"    	           //ToActor
+	rem5[4] = "05-12-2017"             //Date	
+	rem5[5] = "EXP-206"               //ExpenditureId 
+
+
+	var rem6  = make([]string, 6,6)
+	rem6[0] = "REM-306"                //ReimbursementId
+	rem6[1] = "1000"                   //Amount
+    rem6[2] = "ACT-102"                //FromActor  
+    rem6[3] = "ACT-103"    	           //ToActor
+	rem6[4] = "05-16-2017"             //Date	
+	rem6[5] = "EXP-208"               //ExpenditureId 
+
+	var rem7  = make([]string, 6,6)
+	rem7[0] = "REM-307"                //ReimbursementId
+	rem7[1] = "1500"                   //Amount
+    rem7[2] = "ACT-102"                //FromActor  
+    rem7[3] = "ACT-103"    	           //ToActor
+	rem7[4] = "05-19-2017"             //Date	
+	rem7[5] = "EXP-209"               //ExpenditureId 
+
+
+// ============================================================================================================================
+// Init account - create a new account, store into chaincode world state, and then append the account index
+// ============================================================================================================================
+func (t *SimpleChaincode) init_reimbursement(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var err error
+
+	if len(args) != 6 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 6")
+	}
+
+	//input sanitation
+	fmt.Println("- start init acount")
+	if len(args[0]) <= 0 {
+		return nil, errors.New("1st argument must be a non-empty string")
+	}
+	if len(args[1]) <= 0 {
+		return nil, errors.New("2nd argument must be a non-empty string")
+	}
+	if len(args[2]) <= 0 {
+		return nil, errors.New("3rd argument must be a non-empty string")
+	}
+	if len(args[3]) <= 0 {
+		return nil, errors.New("4th argument must be a non-empty string")
+	}
+	if len(args[4]) <= 0 {
+		return nil, errors.New("5th argument must be a non-empty string")
+	}
+	if len(args[5]) <= 0 {
+		return nil, errors.New("6th argument must be a non-empty string")
+	}
+
+
+
+	remId := args[0]
+
+	remAmount, err := strconv.ParseFloat(args[1], 64)   //strings.ToLower(args[1])
+
+	if err != nil {
+		return nil, errors.New("2nd argument must be a numeric string")
+	}
+
+    remFromActor := arg[2]
+    remToActor := arg[3]
+	remDate := arg[4]
+    remExpId := arg[5]
+    
+
+	//check if account already exists
+	accountAsBytes, err := stub.GetState(remId)
+	if err != nil {
+		return nil, errors.New("Failed to get expenditure id")
+	}
+
+	rem := Reimbursement{}
+	json.Unmarshal(accountAsBytes, &rem)
+	if rem.ReimbursementId == expId {
+		return nil, errors.New("This reimbursement arleady exists")
+	}
+
+	
+	remAmountStr: = strconv.FormatFloat(remAmount, 'f', -1, 64)
+
+	//build the expenditure json string 
+	str := `{"reimbursementid": "` + remId + `", "amount": "` + remAmountStr + `", "fromactor": "` + remFromActor + 
+	       `", "toUser": "` + remToActor + `", "date": "` + remDate + `", "expenditureid": "` + remExpId + 
+	        `"}`
+	//jsonAsBytesActor, _ := json.Marshal(newActor)
+	err = stub.PutState(remId, []byte(str))
+	if err != nil {
+		return nil, err
+	}
+
+	//get the account index
+	accountsAsBytes, err := stub.GetState(accountIndexStr)
+	if err != nil {
+		return nil, errors.New("Failed to get account index")
+	}
+	var accountIndex []string
+	json.Unmarshal(accountsAsBytes, &accountIndex)
+
+	//append the index 
+	accountIndex = append(accountIndex, remId)
+	jsonAsBytes, _ := json.Marshal(accountIndex)
+	err = stub.PutState(accountIndexStr, jsonAsBytes)
+
+	return nil, nil
+}
 
 //************************
 /*
